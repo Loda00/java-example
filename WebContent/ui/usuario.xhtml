@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<ui:composition template="../templates/uiConMenu.xhtml">
+	<ui:define name="content">
+	 <h:form id="frmLista">
+	 	<p:commandButton value="Nuevo Usuario"
+	 		action="#{usuarioController.nuevoUsuario}" 
+	 		oncomplete="PF('wRegistrar').show()"
+	 		update=":idRegistrar"/>
+	 
+		<p:dataTable value="#{usuarioController.listadoUsuario}" 
+			var="row" id="idLista"
+			rowKey="#{row.usuario}" selectionMode="single" 
+			rows="10"
+            paginator="true"
+            paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} 
+                            					{NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+			binding="#{usuarioController.dtFila}">
+			<p:column headerText="Login" style="width:50px">
+				<h:outputLabel value="#{row.usuario}" />			
+			</p:column>
+			<p:column headerText="Nombre">
+				<h:outputLabel value="#{row.nombre}"/>			
+			</p:column>
+			<p:column headerText="Apellido">
+				<h:outputLabel value="#{row.apellido}"/>			
+			</p:column>
+			
+			<p:column headerText="Ultimo Acceso" style="width:200px">
+				<h:outputLabel value="#{row.facceso}">
+				<f:convertDateTime pattern="dd/MM/yyyy" type="date"/>			
+			</h:outputLabel>
+		
+			</p:column>
+			<p:column headerText="">
+				<p:commandButton icon="fa fa-fw fa-edit"  
+					action="#{usuarioController.seleccionar}"
+					oncomplete="PF('wActualizar').show()"
+					update=":idActualizar"/>
+			</p:column>
+			<p:column headerText="">
+				<p:commandButton icon="fa fa-fw fa-remove" 
+					action="#{usuarioController.seleccionar}"
+					onclick="PF('cd').show()"/>
+			</p:column>
+			
+		   </p:dataTable>
+		   <p:confirmDialog message="Seguro de eliminar?" 
+		   		widgetVar="cd">
+		   			<p:commandButton value="Si" 
+		   				action="#{usuarioController.eliminarUsuario}"
+		   				oncomplete="PF('cd').hide()"
+		   				update="idLista"/>
+		   			<p:commandButton value="No" 
+		   				onclick="PF('cd').hide()"/>
+		   </p:confirmDialog>
+		</h:form>
+		<!-- dialogo para registrar usuario -->
+		<p:dialog header="Registrar Usuario" modal="true" 
+				widgetVar="wRegistrar" id="idRegistrar">
+				 <h:form>
+				 	<p:growl  autoUpdate="true" showDetail="true"/>
+				 	<p:fieldset legend="Registrar Usuario">
+				 		<p:panelGrid columns="2">
+				 		<h:outputLabel value="Usuario:" />
+				 		<p:inputText 
+				 			value="#{usuarioController.usuario.usuario}"
+				 			required="true" requiredMessage="Nombre obligatorio"/>
+				 			
+				 		<h:outputLabel value="Clave" />
+				 		<p:password 
+				 			value="#{usuarioController.usuario.clave}"
+				 			required="true" requiredMessage="Clave Obligatoria"/>
+				 		<h:outputLabel value="Nombre:" />
+				 		<p:inputText 
+				 			value="#{usuarioController.usuario.nombre}"
+				 			required="true" requiredMessage="Nombre obligatorio"/>
+				 		
+				 		<h:outputLabel value="Apellido" />
+				 		<p:inputText 
+				 			value="#{usuarioController.usuario.apellido}"
+				 			required="true" requiredMessage="Apellido Obligatorio"/>
+				 		<h:outputLabel value="Fecha Acceso:" />
+				 		<p:calendar  showOn="button" pattern="yyyy-MM-dd" locale="es"
+				 		 value="#{usuarioController.usuario.facceso}"/>
+				 		 <f:facet name="footer">
+				 		 	<p:commandButton value="Grabar"  
+				 		 		action="#{usuarioController.registrarUsuario}"
+				 		 		oncomplete="if (!args.validationFailed)  PF('wRegistrar').hide()"
+				 		 		update=":frmLista:idLista"/>
+				 		 </f:facet>	 	
+				 		</p:panelGrid>
+				 	</p:fieldset>
+				 </h:form>		
+		</p:dialog>
+		<!-- dialogo para actualizar usuario -->
+		<p:dialog header="Actualizar Usuario" modal="true" 
+				widgetVar="wActualizar" id="idActualizar">
+				 <h:form>
+				 	<p:growl  autoUpdate="true" showDetail="true"/>
+				 	<p:fieldset legend="Actualizar Usuario">
+				 		<p:panelGrid columns="2">
+				 		<h:outputLabel value="Clave" />
+				 		<p:password 
+				 			value="#{usuarioController.usuario.clave}"
+				 			required="true" requiredMessage="Clave Obligatoria"/>
+				 		<h:outputLabel value="Nombre:" />
+				 		<p:inputText 
+				 			value="#{usuarioController.usuario.nombre}"
+				 			required="true" requiredMessage="Nombre obligatorio"/>
+				 		
+				 		<h:outputLabel value="Apellido" />
+				 		<p:inputText
+				 			value="#{usuarioController.usuario.apellido}"
+				 			required="true" requiredMessage="Apellido Obligatorio"/>
+				 		<h:outputLabel value="Fecha Acceso:" />
+				 		<p:calendar  showOn="button" pattern="yyyy-MM-dd" locale="es"
+				 		 value="#{usuarioController.usuario.facceso}"/>
+				 		
+				 		 <f:facet name="footer">
+				 		 	<p:commandButton value="Actualizar"  
+				 		 		action="#{usuarioController.actualizarUsuario}"
+				 		 		oncomplete="if (!args.validationFailed)  PF('wActualizar').hide()"
+				 		 		update=":frmLista:idLista"/>
+				 		 </f:facet>	 	
+				 		</p:panelGrid>
+				 	</p:fieldset>
+				 </h:form>		
+		</p:dialog>
+	</ui:define>
+</ui:composition>
+</html>
